@@ -129,15 +129,21 @@ class Format {
 		else
 			return $phone;
 	}
-
+    /**
+     * truncate $string after $len if $string is longer than $len.
+     * when $string is truncated suffix `...` is appended.
+     * @param  [type] $string string to truncate
+     * @param  [type] $len    max length(not byte length!)
+     * @param  [type] $hard   if true no suffix is appended.
+     * @return [type]         truncated string
+     */
     function truncate($string,$len,$hard=false) {
 
-        if(!$len || $len>strlen($string))
+        if(!$len || $len>mb_strlen($string))
             return $string;
 
-        $string = substr($string,0,$len);
-
-        return $hard?$string:(substr($string,0,strrpos($string,' ')).' ...');
+        $string = mb_substr($string,0,$len);
+        return $hard ? $string : $string . '...';
     }
 
     function strip_slashes($var) {
