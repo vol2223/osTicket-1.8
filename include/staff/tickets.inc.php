@@ -213,7 +213,7 @@ $$x=' class="'.strtolower($order).'" ';
 if($_GET['limit'])
     $qstr.='&limit='.urlencode($_GET['limit']);
 
-$qselect ='SELECT ticket.ticket_id,tlock.lock_id,ticket.`number`,ticket.dept_id,ticket.staff_id,ticket.team_id '
+$qselect ='SELECT ticket.ticket_id,tlock.lock_id,ticket.`number`,ticket.dept_id,ticket.staff_id,ticket.team_id,ticket.lastresponse,(SELECT poster FROM ost_ticket_thread WHERE id = (SELECT MAX(id) FROM ost_ticket_thread WHERE ticket_id = ticket.ticket_id)) as lastposter'
     .' ,user.name'
     .' ,email.address as email, dept.dept_name, status.state '
          .' ,status.name as status,ticket.source,ticket.isoverdue,ticket.isanswered,ticket.created ';
@@ -364,6 +364,8 @@ if ($results) {
 	        <th width="70">
                 <a  <?php echo $date_sort; ?> href="tickets.php?sort=date&order=<?php echo $negorder; ?><?php echo $qstr; ?>"
                     title="<?php echo sprintf(__('Sort by %s %s'), __('Date'), __($negorder)); ?>"><?php echo __('Date'); ?></a></th>
+	        <th width="70"><?php echo '最終返信日'; ?></th>
+	        <th width="70"><?php echo '最終返信者'; ?></th>
 	        <th width="280">
                  <a <?php echo $subj_sort; ?> href="tickets.php?sort=subj&order=<?php echo $negorder; ?><?php echo $qstr; ?>"
                     title="<?php echo sprintf(__('Sort by %s %s'), __('Subject'), __($negorder)); ?>"><?php echo __('Subject'); ?></a></th>
@@ -457,6 +459,8 @@ if ($results) {
                   <a class="Icon <?php echo strtolower($row['source']); ?>Ticket ticketPreview" title="Preview Ticket"
                     href="tickets.php?id=<?php echo $row['ticket_id']; ?>"><?php echo $tid; ?></a></td>
                 <td align="center" nowrap><?php echo Format::db_datetime($row['effective_date']); ?></td>
+                <td align="center" nowrap><?php echo Format::db_datetime($row['lastresponse']); ?></td>
+                <td align="center" nowrap><?php echo $row['lastposter']; ?></td>
                 <td><a <?php if ($flag) { ?> class="Icon <?php echo $flag; ?>Ticket" title="<?php echo ucfirst($flag); ?> Ticket" <?php } ?>
                     href="tickets.php?id=<?php echo $row['ticket_id']; ?>"><?php echo $subject; ?></a>
                      <?php
